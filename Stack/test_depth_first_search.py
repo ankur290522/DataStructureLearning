@@ -1,6 +1,7 @@
 import unittest
 from depth_first_search import DepthFirstSearch, DFSMaizeEmptyError
 from Stack import Stack
+from StackErrorHandling import StackIsEmpty
 
 
 class TestDepthFirstSearch(unittest.TestCase):
@@ -39,10 +40,9 @@ class TestDepthFirstSearch(unittest.TestCase):
         self.stack.push('c')
         assert self.stack.reverse_string() == 'cba'
     
-    # def test_reverse_string_empty_stack(self):
-    #     with pytest.raises(Exception) as exc_info:
-    #         self.stack.reverse_string()
-    #     assert str(exc_info.value) == 'CustomException: Stack is empty'
+    def test_reverse_string_empty(self):
+        with self.assertRaises(StackIsEmpty) as context:
+            self.stack.reverse_string()
 
     def create_maize(self):
         maize = [[0]*3 for row in range(3)]
@@ -67,5 +67,14 @@ class TestDepthFirstSearch(unittest.TestCase):
         with self.assertRaises(DFSMaizeEmptyError) as context:
             DepthFirstSearch(maize)
 
+    def test_predecessor(self):
+        maize = self.create_maize()
+        maize[0][1] = 1
+        maize[1][0] = 1
+        maize[1][2] = 1
+        maize[2][1] = 1
+        dfs = DepthFirstSearch(maize)
+        self.assertEqual(dfs.get_result(), [0, 1, 2])
+        
 if __name__ == "__main__":
     unittest.main()
